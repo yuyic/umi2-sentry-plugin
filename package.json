@@ -6,6 +6,9 @@
   "files": [
     "lib"
   ],
+  "publishConfig": {
+    "registry": "http://192.168.1.55:8081/repository/npm-internal/"
+  },
   "license": "MIT",
   "peerDependencies": {
     "umi": "^2.12.0",
