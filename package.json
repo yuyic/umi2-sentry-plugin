@@ -1,0 +1,22 @@
+{
+  "name": "umi2-sentry-plugin",
+  "version": "1.0.0@beta",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "umi": "^2.12.0",
+    "webpack": "^4.43.0"
+  },
+  "devDependencies": {
+    "@types/webpack": "^4.41.21",
+    "umi": "^2.12.0",
+    "umi-types": "^0.5.14"
+  },
+  "scripts": {
+    "build": "tsc"
+  }
+}
