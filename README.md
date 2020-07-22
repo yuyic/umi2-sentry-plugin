@@ -1,7 +1,7 @@
 
 # `umi2-sentry-plugin`
 
-> 错误边界组件
+> umi2.x 的Sentry插件，注入Sentry代码并上传
 
 ## Usage
 ```js
