@@ -77,22 +77,22 @@ export default function (api: IApi, options: SentryPluginOptions) {
         }
     `)
     
-
-    if(options.sourceMapUrl){
-
-        const sourceMapUrl = typeof options.sourceMapUrl === 'string' ? options.sourceMapUrl : options.sourceMapUrl[ process.env.UMI_ENV ]
-        api.chainWebpackConfig(memo => {
-            memo.devtool(false);
-            memo.plugin('source-map').use(webpack.SourceMapDevToolPlugin, [
-                {
-                    //@ts-ignore
-                    namespace: options.project,
-                    append: `\n//# sourceMappingURL=${sourceMapUrl || ''}/[url]`,
-                    filename: '[file].map',
-                },
-            ]);
-        });
+    let sourceMapUrl = "";
+    if(typeof options.sourceMapUrl!=="undefined" && options.sourceMapUrl!==null){
+        sourceMapUrl = typeof options.sourceMapUrl === 'string' ? options.sourceMapUrl : options.sourceMapUrl[ process.env.UMI_ENV ]
     }
+
+    api.chainWebpackConfig(memo => {
+        memo.devtool(false);
+        memo.plugin('source-map').use(webpack.SourceMapDevToolPlugin, [
+            {
+                //@ts-ignore
+                namespace: options.project,
+                append: `\n//# sourceMappingURL=${sourceMapUrl || ""}/[url]`,
+                filename: '[file].map',
+            },
+        ]);
+    });
 
     if(process.env.NODE_ENV === 'production'){
         api.onBuildSuccess((resp) => {
