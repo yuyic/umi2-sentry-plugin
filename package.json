@@ -1,6 +1,6 @@
 {
   "name": "umi2-sentry-plugin",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -10,10 +10,6 @@
     "registry": "http://192.168.1.55:8081/repository/npm-internal/"
   },
   "license": "MIT",
-  "peerDependencies": {
-    "umi": "^2.12.0",
-    "webpack": "^4.43.0"
-  },
   "devDependencies": {
     "@types/webpack": "^4.41.21",
     "umi": "^2.12.0",
@@ -22,5 +18,9 @@
   },
   "scripts": {
     "build": "tsc"
+  },
+  "dependencies": {
+    "@sentry/browser": "^5.23.0",
+    "@sentry/cli": "^1.56.1"
   }
 }
