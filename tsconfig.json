@@ -11,6 +11,9 @@
       "allowJs": true,
       "outDir": "lib"
     },
+    "include": [
+      "src"
+    ],
     "exclude": [
       "lib",
       "example",
