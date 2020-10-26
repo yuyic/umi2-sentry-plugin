@@ -4,9 +4,7 @@ import StackTraceGPS from "stacktrace-gps"
 import StackFrame from "stackframe"
 
 const gps = new StackTraceGPS();
-const sentryClient = new BrowserClient({
-    dsn: process.env._dsn
-})
+let sentryClient: BrowserClient;
 
 async function isErrorFromSlave(stackframes: StackFrame[]){
     try{
@@ -17,7 +15,6 @@ async function isErrorFromSlave(stackframes: StackFrame[]){
         return false
     }
 }
-
 
 const initSentry = () => {
     init({
@@ -32,12 +29,12 @@ const initSentry = () => {
                             window.__resolveCaptureEvent(event, anonyStackFrames)
                         }
                         else{
-                            sentryClient.captureEvent(event)
+                            getClient().captureEvent(event)
                         }
                     })
                 }
                 else{
-                    sentryClient.captureEvent(event)
+                    getClient().captureEvent(event)
                 }
             }
             catch(err){
@@ -48,7 +45,29 @@ const initSentry = () => {
     })
 }
 
+const getClient = () => {
+    if(!sentryClient){
+        sentryClient = new BrowserClient({
+            dsn: process.env._dsn
+        })
+    }
+    return sentryClient;
+}
+
+const close = () => {
+    if(sentryClient){
+        try{
+            sentryClient.close()
+        }
+        finally{
+            sentryClient = null;
+        }
+    }
+}
+
 
 export {
-    initSentry
+    initSentry,
+    getClient,
+    close
 }

@@ -1,29 +1,24 @@
-import { execSync } from "child_process"
 import fs from "fs"
 import { IApi } from 'umi-types';
+import { Event } from "@sentry/browser"
+import { normalizeUrl, runCommand, getVersion } from "./utils"
 
 declare global {
     interface Window {
-        __resolveCaptureEvent: (event: any, stackframes: any) => void;
+        __resolveCaptureEvent: (event: Event, stackframes: StackFrame[]) => void;
         __umijsByDsn?: { [dsn:string]: string };
         __POWERED_BY_QIANKUN__?:boolean;
     }
 }
-
-function normalizeUrl(url: string) {
-    return url.replace(/([^:]\/)\/+/g, "$1")
-}
-
-function removeEmptyLines (string: string) {
-    return string.replace(/[\s\r\n]+$/, '')
-}
-function runCommand(cli:string,command:string){
-    return removeEmptyLines(''+execSync([cli, command].join(' ')))
-}
-
-function getVersion(){
-    const version = runCommand('git', 'rev-parse --abbrev-ref HEAD') + "-" + runCommand('git', 'rev-parse HEAD');
-    return version.replace(/(\\|\/)/g, "_");
+export interface SentryPluginOptions{
+    dsn: string,
+    project: string,
+    url?: string,
+    auth_token?: string,
+    org?: string,
+    path?: string,
+    devtool?: string,
+    version?: string,
 }
 
 function hasDefinedOptions(options: SentryPluginOptions, keys: string[]){
@@ -39,17 +34,6 @@ function hasDefinedOptions(options: SentryPluginOptions, keys: string[]){
     if(missed.length>0){
         throw new Error(`Sentry plugin 需要配置参数${missed.join(',')}`)
     }
-}
-
-export interface SentryPluginOptions{
-    dsn: string,
-    project: string,
-    url?: string,
-    auth_token?: string,
-    org?: string,
-    path?: string,
-    devtool?: string,
-    version?: string,
 }
 
 
@@ -77,6 +61,7 @@ export default function (api: IApi, options: SentryPluginOptions) {
     else{
         api.addRuntimePlugin(require.resolve("./masterRuntime.js"))
     }
+    
     api.modifyAFWebpackOpts(memo => {
         return {
             ...memo,

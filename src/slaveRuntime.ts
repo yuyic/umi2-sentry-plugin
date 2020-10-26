@@ -1,20 +1,14 @@
 import { BrowserClient } from "@sentry/browser"
 import { get, set } from "lodash"
-import { initSentry } from "./sentry"
+import { initSentry, getClient, close } from "./sentry"
 
 function normalizeUrl(...args: string[]) {
   return args.join('/').replace(/([^:]\/)\/+/g, '$1');
 }
 
-
-let sentryClient
-
 export const qiankun = {
-  bootstrap: (props) => {
+  bootstrap: (props: { entry: string; }) => {
     if( window.__POWERED_BY_QIANKUN__){
-      sentryClient = new BrowserClient({
-        dsn: process.env._dsn
-      });
       let umijs = "umi.js";
       if(process.env.NODE_ENV==="production"){
         umijs = get(window.__umijsByDsn, process.env._dsn, umijs);
@@ -27,29 +21,21 @@ export const qiankun = {
               colno: sf.columnNumber
         }))
         set(event, 'exception.values[0].stacktrace.frames', frames);
-        sentryClient.captureEvent(event);
+        getClient().captureEvent(event);
       }
     }
   },
   unmount(){
-    if(sentryClient){
-      try{
-        sentryClient.close()
-      }
-      finally{
-        sentryClient = null;
-      }
-    }
+    close();
     delete window.__resolveCaptureEvent;
-    
   }
 }
 
 
-function wrapLifecycles(lifecycle){
+function wrapLifecycles(lifecycle: any){
 
-  function combine(oldFn, newFn){
-    return (...args)=>{
+  function combine(oldFn:Function, newFn: Function){
+    return (...args: any[])=>{
       oldFn && oldFn.apply(oldFn, args)
       newFn.apply(newFn, args)
     }
@@ -57,7 +43,7 @@ function wrapLifecycles(lifecycle){
 
   for(var prop in lifecycle){
     const fn = lifecycle[prop]
-    if(qiankun[prop] && qiankun[prop]!==fn){
+    if(typeof qiankun[prop] === "function" && typeof fn === "function" && qiankun[prop]!==fn){
       lifecycle[prop] = combine(fn, qiankun[prop])
     }
   }
