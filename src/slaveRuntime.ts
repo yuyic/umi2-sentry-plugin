@@ -18,7 +18,7 @@ export const qiankun = {
           const frames = stackFrames.map(sf=> ({
                 filename: filename,
                 lineno: sf.lineNumber,
-                colno: sf.columnNumber
+                colno: sf.columnNumber-20
           }))
           set(event, 'exception.values[0].stacktrace.frames', frames);
           getClient().captureEvent(event);
