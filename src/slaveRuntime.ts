@@ -1,4 +1,3 @@
-import { BrowserClient } from "@sentry/browser"
 import { get, set } from "lodash"
 import { initSentry, getClient, close } from "./sentry"
 
@@ -9,19 +8,24 @@ function normalizeUrl(...args: string[]) {
 export const qiankun = {
   bootstrap: (props: { entry: string; }) => {
     if( window.__POWERED_BY_QIANKUN__){
-      let umijs = "umi.js";
-      if(process.env.NODE_ENV==="production"){
-        umijs = get(window.__umijsByDsn, process.env._dsn, umijs);
+      try{
+        let umijs = "umi.js";
+        if(process.env.NODE_ENV==="production"){
+          umijs = get(window.__umijsByDsn, process.env._dsn, "umi.js");
+        }
+        const filename =  normalizeUrl(props.entry.split("?")[0], umijs);
+        window.__resolveCaptureEvent = function resolveStackFrames(event, stackFrames){
+          const frames = stackFrames.map(sf=> ({
+                filename: filename,
+                lineno: sf.lineNumber,
+                colno: sf.columnNumber
+          }))
+          set(event, 'exception.values[0].stacktrace.frames', frames);
+          getClient().captureEvent(event);
+        }
       }
-      const filename =  normalizeUrl(props.entry, umijs);
-      window.__resolveCaptureEvent = function resolveStackFrames(event, stackFrames){
-        const frames = stackFrames.map(sf=> ({
-              filename: filename,
-              lineno: sf.lineNumber,
-              colno: sf.columnNumber
-        }))
-        set(event, 'exception.values[0].stacktrace.frames', frames);
-        getClient().captureEvent(event);
+      catch(err){
+        getClient().captureException(err)
       }
     }
   },
