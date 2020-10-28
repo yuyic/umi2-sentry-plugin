@@ -87,14 +87,17 @@ export default function (api: IApi, options: SentryPluginOptions) {
           const src = $(el).attr('src');
           const umiEntryJs = /\/?umi(\.\w+)?\.js$/g;
           if (umiEntryJs.test(src)) {
-            $('head').append(`<script>
-              ;(function(){
-                if(!window.__umijsByDsn){
-                  window.__umijsByDsn = {}
+                $('head').append(`<script>
+                ;(function(){
+                    if(!window.__umijsByDsn){
+                    window.__umijsByDsn = {}
+                    }
+                    window.__umijsByDsn['${options.dsn}'] = '${src}';
+                })();
+                </script>`);
+                if(!isSlave){
+                    $('head').append(`<link rel="prefetch" href="${src}.map">`);
                 }
-                window.__umijsByDsn['${options.dsn}'] = '${src}';
-              })();
-            </script>`);
           }
         });
         return $;
