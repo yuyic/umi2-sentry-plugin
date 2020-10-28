@@ -42,6 +42,7 @@ const initSentry = () => {
             }
             catch(err){
                 console.error(`[umi2-sentry-plugin]`, err)
+                getClient().captureException(err)
             }
             return null
         }
@@ -51,7 +52,8 @@ const initSentry = () => {
 const getClient = () => {
     if(!sentryClient){
         sentryClient = new BrowserClient({
-            dsn: process.env._dsn
+            dsn: process.env._dsn,
+            release: process.env._version
         })
     }
     return sentryClient;

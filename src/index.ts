@@ -76,7 +76,8 @@ export default function (api: IApi, options: SentryPluginOptions) {
             define: {
                 ...memo.define,
                 "process.env._isSlave": isSlave,
-                "process.env._dsn": options.dsn
+                "process.env._dsn": options.dsn,
+                "process.env._version": options.version
             }
         };
     });
