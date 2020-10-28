@@ -12,6 +12,5 @@ export function runCommand(cli:string,command:string){
 }
 
 export function getVersion(){
-    const version = runCommand('git', 'rev-parse --abbrev-ref HEAD') + "-" + runCommand('git', 'rev-parse HEAD');
-    return version.replace(/(\\|\/)/g, "_");
+    return runCommand('git', 'rev-parse --short HEAD');
 }

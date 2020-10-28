@@ -8,10 +8,13 @@ let sentryClient: BrowserClient;
 
 async function isErrorFromSlave(stackframes: StackFrame[]){
     try{
-        const pinned = await gps.findFunctionName(stackframes[0]);
-        return pinned && pinned.functionName.indexOf("geval(")>-1
+        const d = Date.now()
+        const pinned = await gps.getMappedLocation(stackframes[0]);
+        console.log(Date.now()-d, pinned);
+        return pinned && pinned.fileName.indexOf("import-html-entry")>-1
     }
     catch(err){
+        console.log(err)
         return false
     }
 }
