@@ -62,6 +62,14 @@ export default function (api: IApi, options: SentryPluginOptions) {
         api.addRuntimePlugin(require.resolve("./masterRuntime.js"))
     }
     
+    api.modifyDefaultConfig(memo=>{
+        return {
+            ...memo,
+            hash: true,
+            devtool: options.devtool
+        }
+    })
+
     api.modifyAFWebpackOpts(memo => {
         return {
             ...memo,
