@@ -76,8 +76,8 @@ export default function (api: IApi, options: SentryPluginOptions) {
             define: {
                 ...memo.define,
                 "process.env._isSlave": isSlave,
-                "process.env._dsn": options.dsn,
-                "process.env._version": options.version
+                "process.env._sentry_dsn": options.dsn,
+                "process.env._sentry_version": options.version
             }
         };
     });
@@ -88,12 +88,12 @@ export default function (api: IApi, options: SentryPluginOptions) {
           const umiEntryJs = /\/?umi(\.\w+)?\.js$/g;
           if (umiEntryJs.test(src)) {
                 $('head').append(`<script>
-                ;(function(){
-                    if(!window.__umijsByDsn){
-                    window.__umijsByDsn = {}
-                    }
-                    window.__umijsByDsn['${options.dsn}'] = '${src}';
-                })();
+                    ;(function(){
+                        if(!window.__umijsByDsn){
+                            window.__umijsByDsn = {}
+                        }
+                        window.__umijsByDsn['${options.dsn}'] = '${src}';
+                    })();
                 </script>`);
                 if(!isSlave){
                     $('head').append(`<link rel="prefetch" href="${src}.map">`);

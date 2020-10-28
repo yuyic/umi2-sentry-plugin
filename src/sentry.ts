@@ -14,14 +14,14 @@ async function isErrorFromSlave(stackframes: StackFrame[]){
         return pinned && pinned.fileName.indexOf("import-html-entry")>-1
     }
     catch(err){
-        console.log(err)
+        getClient().captureException(err);
         return false
     }
 }
 
 const initSentry = () => {
     init({
-        dsn: process.env._dsn,
+        dsn: process.env._sentry_dsn,
         beforeSend(event,hint){
             try{
                 if(window.__resolveCaptureEvent){
@@ -41,7 +41,6 @@ const initSentry = () => {
                 }
             }
             catch(err){
-                console.error(`[umi2-sentry-plugin]`, err)
                 getClient().captureException(err)
             }
             return null
@@ -52,8 +51,8 @@ const initSentry = () => {
 const getClient = () => {
     if(!sentryClient){
         sentryClient = new BrowserClient({
-            dsn: process.env._dsn,
-            release: process.env._version
+            dsn: process.env._sentry_dsn,
+            release: process.env._sentry_version
         })
     }
     return sentryClient;
@@ -61,13 +60,9 @@ const getClient = () => {
 
 const close = () => {
     if(sentryClient){
-        try{
-            sentryClient.close()
-        }
-        finally{
-            sentryClient = null;
-        }
+        sentryClient.close()
     }
+    sentryClient = null;
 }
 
 

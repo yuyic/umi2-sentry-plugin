@@ -11,7 +11,7 @@ export const qiankun = {
       try{
         let umijs = "umi.js";
         if(process.env.NODE_ENV==="production"){
-          umijs = get(window.__umijsByDsn, process.env._dsn, "umi.js");
+          umijs = get(window.__umijsByDsn, process.env._sentry_dsn, "umi.js");
         }
         const filename =  normalizeUrl(props.entry.split("?")[0], umijs);
         window.__resolveCaptureEvent = function resolveStackFrames(event, stackFrames){
