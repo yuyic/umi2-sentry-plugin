@@ -1,4 +1,4 @@
-import { get, set } from "lodash"
+import { get, set, reverse } from "lodash"
 import { initSentry, getClient, close } from "./sentry"
 
 function normalizeUrl(...args: string[]) {
@@ -20,7 +20,7 @@ export const qiankun = {
                 lineno: sf.lineNumber,
                 colno: sf.columnNumber-20
           }))
-          set(event, 'exception.values[0].stacktrace.frames', frames);
+          set(event, 'exception.values[0].stacktrace.frames', reverse(frames));
           getClient().captureEvent(event);
         }
       }
