@@ -6,7 +6,7 @@ function normalizeUrl(...args: string[]) {
 }
 
 export const qiankun = {
-  bootstrap: (props: { entry: string; }) => {
+  mount: (props: { entry: string; }) => {
     if( window.__POWERED_BY_QIANKUN__){
       try{
         let umijs = "umi.js";
