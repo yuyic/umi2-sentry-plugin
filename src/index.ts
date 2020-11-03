@@ -112,9 +112,9 @@ export default function (api: IApi, options: SentryPluginOptions) {
                         window.__umijsByDsn['${options.dsn}'] = '${src}';
                     })();
                 </script>`);
-                if(!isSlave){
-                    $('head').append(`<link rel="prefetch" href="${src}.map">`);
-                }
+                // if(!isSlave){
+                //     $('head').append(`<link rel="prefetch" href="${src}.map">`);
+                // }
           }
         });
         return $;

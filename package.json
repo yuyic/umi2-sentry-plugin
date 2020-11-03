@@ -23,7 +23,6 @@
   "dependencies": {
     "@sentry/browser": "^5.23.0",
     "@sentry/cli": "^1.56.1",
-    "stackframe": "^1.2.0",
-    "stacktrace-gps": "^3.0.4"
+    "stackframe": "^1.2.0"
   }
 }
