@@ -49,9 +49,10 @@ export default function (api: IApi, options: SentryPluginOptions) {
         },
         options,
     );
+    
+    
 
-
-    const isSlave = api.config.plugins.some(
+    const isSlave = api.config.plugins?.some(
         plugin => plugin[0] === "@umijs/plugin-qiankun/slave"
     )
     
@@ -98,6 +99,13 @@ export default function (api: IApi, options: SentryPluginOptions) {
         })
         return memo;
     });
+
+
+    api.modifyHTMLChunks((chunks) => {
+        return Array.from(new Set(["import-html-entry"].concat(chunks)))
+    });
+
+    
     
     api.modifyHTMLWithAST($ => {
         $('script').each((_i, el) => {
@@ -112,9 +120,6 @@ export default function (api: IApi, options: SentryPluginOptions) {
                         window.__umijsByDsn['${options.dsn}'] = '${src}';
                     })();
                 </script>`);
-                // if(!isSlave){
-                //     $('head').append(`<link rel="prefetch" href="${src}.map">`);
-                // }
           }
         });
         return $;
