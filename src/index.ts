@@ -81,6 +81,23 @@ export default function (api: IApi, options: SentryPluginOptions) {
             }
         };
     });
+
+    api.chainWebpackConfig(memo => {
+        memo.optimization.splitChunks({
+            chunks:"all",
+            name: 'import-html-entry',
+            cacheGroups: {
+                vendors: {
+                    test(context: any) {
+                        return /import-html-entry/.test(context.resource);
+                    },
+                    chunks: 'all',
+                    enforce: true
+                }
+            }
+        })
+        return memo;
+    });
     
     api.modifyHTMLWithAST($ => {
         $('script').each((_i, el) => {

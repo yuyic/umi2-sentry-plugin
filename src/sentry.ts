@@ -1,17 +1,12 @@
 import { init, BrowserClient } from "@sentry/browser"
 import ErrorStackParser from "./error-stack-parser"
-import StackTraceGPS from "stacktrace-gps"
 import StackFrame from "stackframe"
 
-const gps = new StackTraceGPS();
 let sentryClient: BrowserClient;
 
 async function isErrorFromSlave(stackframes: StackFrame[]){
     try{
-        const d = Date.now()
-        const pinned = await gps.getMappedLocation(stackframes[0]);
-        console.log(Date.now()-d, pinned);
-        return pinned && pinned.fileName.indexOf("import-html-entry")>-1
+        return /import-html-entry/.test(stackframes[0].fileName)
     }
     catch(err){
         getClient().captureException(err);
