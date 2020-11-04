@@ -83,7 +83,7 @@ export default function (api: IApi, options: SentryPluginOptions) {
         };
     });
 
-    if(!isSlave){
+    if(api.config.plugins?.some(plugin => plugin[0] === "@umijs/plugin-qiankun")){
         api.chainWebpackConfig(memo => {
             memo.optimization.splitChunks({
                 chunks:"all",
