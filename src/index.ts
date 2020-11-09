@@ -106,7 +106,7 @@ export default function (api: IApi, options: SentryPluginOptions) {
                 cacheGroups: {
                     vendors: {
                         test(context: any) {
-                            return /import-html-entry/.test(context.resource);
+                            return /[\\/]import-html-entry[\\/]/.test(context.resource);
                         },
                         chunks: 'all',
                         enforce: true
@@ -121,7 +121,7 @@ export default function (api: IApi, options: SentryPluginOptions) {
     }
 
     
-    
+
     api.modifyHTMLWithAST($ => {
         $('script').each((_i, el) => {
           const src = $(el).attr('src');
