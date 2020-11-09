@@ -2,6 +2,8 @@ import fs from "fs"
 import { IApi } from 'umi-types';
 import { Event } from "@sentry/browser"
 import { normalizeUrl, runCommand, getVersion } from "./utils"
+import rimraf from "rimraf"
+import path from "path"
 
 declare global {
     interface Window {
@@ -19,6 +21,7 @@ export interface SentryPluginOptions{
     path?: string,
     devtool?: string,
     version?: string,
+    deleteSourcemapAfterUpload?: boolean
 }
 
 function hasDefinedOptions(options: SentryPluginOptions, keys: string[]){
@@ -34,6 +37,18 @@ function hasDefinedOptions(options: SentryPluginOptions, keys: string[]){
     if(missed.length>0){
         throw new Error(`Sentry plugin 需要配置参数${missed.join(',')}`)
     }
+}
+
+
+const deleteSourcemaps = (dir:string) => {
+    return new Promise((resolve,reject)=>rimraf(path.join(dir, "*.js.map"), function(err: any){
+        if(err){
+            reject(err)
+        }
+        else{
+            resolve()
+        }
+    }))
 }
 
 
@@ -126,7 +141,7 @@ export default function (api: IApi, options: SentryPluginOptions) {
     });
 
     if(process.env.NODE_ENV === 'production'){
-        api.onBuildSuccessAsync(resp => {
+        api.onBuildSuccessAsync(async resp => {
             const data = new Uint8Array(
               Buffer.from(`
                         [defaults]
@@ -152,6 +167,12 @@ export default function (api: IApi, options: SentryPluginOptions) {
             );
             runCommand('sentry-cli', `releases finalize ${options.version} `);
             api.log.success('上传成功');
+
+            if(options.deleteSourcemapAfterUpload){
+                api.log.watch("正在删除JS sourcemap...");
+                await deleteSourcemaps(api.paths.outputPath)
+                api.log.success('JS sourcemap已删除!');
+            }
             return resp;
         });
     }

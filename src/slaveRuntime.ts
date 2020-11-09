@@ -7,31 +7,33 @@ function normalizeUrl(...args: string[]) {
 
 export const qiankun = {
   mount: (props: { entry: string; }) => {
-    if( window.__POWERED_BY_QIANKUN__){
-      try{
-        let umijs = "umi.js";
-        if(process.env.NODE_ENV==="production"){
-          umijs = get(window.__umijsByDsn, process.env._sentry_dsn, "umi.js");
-        }
-        const filename =  normalizeUrl(props.entry.split("?")[0], umijs);
-        window.__resolveCaptureEvent = function resolveStackFrames(event, stackFrames){
-          const frames = stackFrames.map(sf=> ({
-                filename: filename,
-                lineno: sf.lineNumber,
-                colno: sf.columnNumber-20
-          }))
-          set(event, 'exception.values[0].stacktrace.frames', reverse(frames));
-          getClient().captureEvent(event);
-        }
-      }
-      catch(err){
-        getClient().captureException(err)
-      }
-    }
+    console.log('mount and create __resolveCaptureEvent', window.__resolveCaptureEvent)
+    // if( window.__POWERED_BY_QIANKUN__){
+    //   try{
+    //     let umijs = "umi.js";
+    //     if(process.env.NODE_ENV==="production"){
+    //       umijs = get(window.__umijsByDsn, process.env._sentry_dsn, "umi.js");
+    //     }
+    //     const filename =  normalizeUrl(props.entry.split("?")[0], umijs);
+    //     window.__resolveCaptureEvent = function resolveStackFrames(event, stackFrames){
+    //       const frames = stackFrames.map(sf=> ({
+    //             filename: filename,
+    //             lineno: sf.lineNumber,
+    //             colno: sf.columnNumber-20
+    //       }))
+    //       set(event, 'exception.values[0].stacktrace.frames', reverse(frames));
+    //       getClient().captureEvent(event);
+    //     }
+    //   }
+    //   catch(err){
+    //     getClient().captureException(err)
+    //   }
+    // }
   },
   unmount(){
-    close();
-    delete window.__resolveCaptureEvent;
+    // close();
+    // delete window.__resolveCaptureEvent;
+    // console.log('unmount and close')
   }
 }
 

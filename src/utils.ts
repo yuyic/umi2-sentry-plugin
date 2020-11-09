@@ -12,5 +12,11 @@ export function runCommand(cli:string,command:string){
 }
 
 export function getVersion(){
-    return runCommand('git', 'rev-parse --short HEAD');
+    try{
+        return runCommand('git', 'rev-parse --short HEAD');
+    }
+    catch(err){
+        console.warn('没有找到相关的.git记录，sentry release将用本地时间代替');
+    }
+    return (new Date()).toLocaleString()
 }
